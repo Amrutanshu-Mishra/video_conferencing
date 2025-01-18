@@ -1,3 +1,4 @@
+import { RedirectToSignIn } from '@clerk/nextjs';
 import { clerkMiddleware,createRouteMatcher } from '@clerk/nextjs/server'
 const protectedRoutes=createRouteMatcher([
   '/',
@@ -7,14 +8,15 @@ const protectedRoutes=createRouteMatcher([
   '/personal-room',
   '/meeting(.*)'
 ])
-export default clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware( async (auth, req) => {
   // Restrict admin routes to users with specific permissions
+  console.log(true);
   if (protectedRoutes(req)) {
-    await auth.protect((has) => {
-      return has({ permission: 'org:admin:example1' }) || has({ permission: 'org:admin:example2' })
-    })
+    console.log(true);
+    await auth.protect();
   }
 })
+
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
