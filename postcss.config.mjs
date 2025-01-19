@@ -4,7 +4,6 @@ const config = {
     tailwindcss: {},
     autoprefixer: {},
   },
-  sourceMap: true,
 };
 
 export default config;
