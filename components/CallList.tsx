@@ -1,4 +1,4 @@
-//@ts-nocheck
+
 'use client'
 import { useGetCalls } from '@/hooks/useGetCalls'
 import { CallRecording } from '@stream-io/node-sdk'
@@ -7,13 +7,12 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import MeetingCard from './MeetingCard'
 import Loader from './Loader'
-import { useToast } from '@/hooks/use-toast'
 
 const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
+  // @ts-expect-error
   const {endedCalls,upcomingCalls,callRecordings,isLoading}= useGetCalls();
   const router=useRouter();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
-  const {toast}=useToast();
   const getCalls=()=>{
     switch (type) {
       case 'ended':
@@ -40,34 +39,23 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
   }
 
   useEffect(()=>{
-    // const fetchRecordings=async ()=>{
-    //   const callData=await Promise.all(callRecordings.map((meeting)=>meeting.queryRecordings()));
-    //   // [['rec1','rec2'],['rec3']]
-    //   const recordings=callData
-    //     .filter(call=>call.recordings.length>0)
-    //     .flatMap(call => call.recordings)
-    //   setRecordings(recordings);
-    // }
-    const fetchRecordings = async () => {
-      try {
-        if (Array.isArray(callRecordings)) {  // Ensure callRecordings is an array
-          const callData = await Promise.all(callRecordings.map((meeting) => meeting.queryRecordings()));
-          const recordings = callData
-            .filter(call => call.recordings.length > 0)
-            .flatMap(call => call.recordings);
-          setRecordings(recordings);
-        }  
-      } catch (error) {
-        console.error("Error fetching recordings:", error);
-        toast({title:"Try again later"})
-      }
+    const fetchRecordings=async ()=>{
+      // @ts-expect-error
+      const callData=await Promise.all(callRecordings.map((meeting)=>meeting.queryRecordings()));
+      // [['rec1','rec2'],['rec3']]
       
-    };
+      const recordings=callData
+      // @ts-expect-error
+        .filter(call=>call.recordings.length>0)
+        .flatMap()
+      setRecordings(recordings);
+    }
+
     if (type==='recordings') {
       fetchRecordings();
     }
 
-  },[type,callRecordings,toast]);
+  },[type,callRecordings]);
 
   const calls=getCalls();
   const noCallsMessage=getNoCallsMessage();
@@ -86,11 +74,15 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
             ? '/icons/upcoming.svg'
             :'/icons/recordings.svg'
           }
-          title={(meeting as Call).state?.custom?.description?.substring(0,26) || meeting?.filename?.substring(0,20) || 'Personal Meeting'}
-          date={meeting.state?.startsAt.toLocaleString()||meeting.start_time.toLocaleString()}
+          // @ts-expect-error
+          title={(meeting as Call).state?.custom.description.substring(0,26) || meeting.filename.substring(0,20) || 'No description'}
+          // @ts-expect-error
+          date={meeting.state.startsAt?.toLocaleString()||meeting.start_time.toLocaleString()}
           isPreviousMeeting={type=='ended'}
           buttonIcon1={type==='recordings' ? '/icons/play.svg':undefined}
+          // @ts-expect-error
           handleClick={type==='recordings' ? ()=> router.push(`${meeting.url}`) : ()=>router.push(`/meeting/${meeting.id}`) }
+          // @ts-expect-error
           link={type==='recordings' ? meeting.url : `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${meeting.id}`}
           buttonText={type==='recordings' ? 'Play' : 'Start'}
           />
