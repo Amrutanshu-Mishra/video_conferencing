@@ -58,6 +58,7 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
           setRecordings(recordings);
         }  
       } catch (error) {
+        console.error("Error fetching recordings:", error);
         toast({title:"Try again later"})
       }
       
@@ -66,7 +67,7 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
       fetchRecordings();
     }
 
-  },[type,callRecordings]);
+  },[type,callRecordings,toast]);
 
   const calls=getCalls();
   const noCallsMessage=getNoCallsMessage();
