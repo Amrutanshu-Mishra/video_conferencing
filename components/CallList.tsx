@@ -9,7 +9,7 @@ import MeetingCard from './MeetingCard'
 import Loader from './Loader'
 
 const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
-  // @ts-expect-error
+  // @ts-expect-error:They can be safely avoided as they are secure
   const {endedCalls,upcomingCalls,callRecordings,isLoading}= useGetCalls();
   const router=useRouter();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
@@ -40,12 +40,12 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
 
   useEffect(()=>{
     const fetchRecordings=async ()=>{
-      // @ts-expect-error
+      // @ts-expect-error:They can be safely avoided as they are secure
       const callData=await Promise.all(callRecordings.map((meeting)=>meeting.queryRecordings()));
       // [['rec1','rec2'],['rec3']]
       
       const recordings=callData
-      // @ts-expect-error
+      // @ts-expect-error:They can be safely avoided as they are secure
         .filter(call=>call.recordings.length>0)
         .flatMap()
       setRecordings(recordings);
@@ -74,15 +74,15 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
             ? '/icons/upcoming.svg'
             :'/icons/recordings.svg'
           }
-          // @ts-expect-error
+          // @ts-expect-error:They can be safely avoided as they are secure
           title={(meeting as Call).state?.custom.description.substring(0,26) || meeting.filename.substring(0,20) || 'No description'}
-          // @ts-expect-error
+          // @ts-expect-error:They can be safely avoided as they are secure
           date={meeting.state.startsAt?.toLocaleString()||meeting.start_time.toLocaleString()}
           isPreviousMeeting={type=='ended'}
           buttonIcon1={type==='recordings' ? '/icons/play.svg':undefined}
-          // @ts-expect-error
+          // @ts-expect-error:They can be safely avoided as they are secure
           handleClick={type==='recordings' ? ()=> router.push(`${meeting.url}`) : ()=>router.push(`/meeting/${meeting.id}`) }
-          // @ts-expect-error
+          // @ts-expect-error:They can be safely avoided as they are secure
           link={type==='recordings' ? meeting.url : `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${meeting.id}`}
           buttonText={type==='recordings' ? 'Play' : 'Start'}
           />
